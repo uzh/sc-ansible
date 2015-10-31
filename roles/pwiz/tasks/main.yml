@@ -1,0 +1,12 @@
+---
+- name: install pwiz packages
+  apt:
+    name={{ item }}
+    state=present
+    update-cache=yes
+  with_items:
+    - libpwiz3
+    - libpwiz-tools
+    - libpwiz-doc
+    - libpwiz-dev
+    - tandem-mass
