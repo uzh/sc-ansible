@@ -1,0 +1,59 @@
+---
+- hosts: all
+  vars:
+    repo: deb http://cran.rstudio.com/bin/linux/ubuntu trusty/
+    repo_key: E084DAB9
+    imagej_baseurl: http://wsr.imagej.net/distros/linux
+    imagej_fname: ij150-linux64-java8.zip
+    imagej_biof_url: http://downloads.openmicroscopy.org/bio-formats/5.1.9/artifacts/bio-formats_plugins.jar
+    # plinker_url: https://www.dropbox.com/sh/4e25ix3psk01yhg/AABogODb5hHJCKXdPjVZqe4Fa/Software/ParticleLinker.jar
+    packages:
+      - r-base
+      - libssl-dev
+      - libssh2-1-dev
+      - libcurl4-openssl-dev
+      - openjdk-7-jre
+      - xvfb
+    githubrepo: pennekampster/bemovi
+
+  tasks:
+    - name: Install apt key
+      apt_key: id={{repo_key}} keyserver=keyserver.ubuntu.com
+
+    - name: Install repo
+      apt_repository: repo="{{repo}}" update_cache=yes
+
+    - name: install packages
+      apt: name={{item}}
+      with_items: "{{packages}}"
+
+    - name: Download imagej
+      get_url: url={{imagej_baseurl}}/{{imagej_fname}} dest=/root/{{imagej_fname}}
+
+    - name: install ImageJ
+      shell: unzip /root/{{imagej_fname}} -d /usr/local creates=/usr/local/ImageJ
+
+    - name: download bio-formats plugin
+      get_url: url={{imagej_biof_url}} dest=/usr/local/ImageJ/plugins
+
+    - name: Ensure permissions are correct
+      file: path=/usr/local/ImageJ mode="a+rX" recurse=yes
+
+    - name: Create directory for ParticleLinker
+      file: dest=/usr/local/ParticleLinker state=directory
+      
+    - name: Download ParticleLinker
+      copy: src=ParticleLinker.jar dest=/usr/local/ParticleLinker/
+
+    - name: copy bemovi installation script
+      copy: |
+        dest=/root/bemovi-install.R
+        content='if("devtools" %in% rownames(installed.packages()) == FALSE){install.packages("devtools", repos='http://cran.us.r-project.org')}\nlibrary("devtools")\nif("bemovi" %in% rownames(installed.packages()) == FALSE){install_github("{{githubrepo}}")}\n'
+
+    - name: Check if bemovi is installed
+      shell: Rscript -e 'installed.packages()' | grep bemovi
+      register: bemovi
+    - name: install bemovi
+      shell: Rscript /root/bemovi-install.R
+      
+      
