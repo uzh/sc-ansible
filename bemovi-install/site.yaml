@@ -31,8 +31,8 @@
       get_url: url={{imagej_baseurl}}/{{imagej_fname}} dest=/root/{{imagej_fname}}
 
     - name: install ImageJ
-      shell: unzip /root/{{imagej_fname}} -d /usr/local creates=/usr/local/ImageJ
-
+      # shell: unzip /root/{{imagej_fname}} -d /usr/local creates=/usr/local/ImageJ
+      unarchive: src=/root/{{imagej_fname}} dest=/usr/local/ copy=no
     - name: download bio-formats plugin
       get_url: url={{imagej_biof_url}} dest=/usr/local/ImageJ/plugins
 
@@ -52,8 +52,11 @@
 
     - name: Check if bemovi is installed
       shell: Rscript -e 'installed.packages()' | grep bemovi
-      register: bemovi
+      register: bemovi_installed
+      ignore_errors: yes
+      
     - name: install bemovi
       shell: Rscript /root/bemovi-install.R
+      when: bemovi_installed|failed
       
       
