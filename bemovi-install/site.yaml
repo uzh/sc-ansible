@@ -31,8 +31,8 @@
       get_url: url={{imagej_baseurl}}/{{imagej_fname}} dest=/root/{{imagej_fname}}
 
     - name: install ImageJ
-      # shell: unzip /root/{{imagej_fname}} -d /usr/local creates=/usr/local/ImageJ
-      unarchive: src=/root/{{imagej_fname}} dest=/usr/local/ copy=no
+      shell: unzip /root/{{imagej_fname}} -d /usr/local creates=/usr/local/ImageJ
+
     - name: download bio-formats plugin
       get_url: url={{imagej_biof_url}} dest=/usr/local/ImageJ/plugins
 
