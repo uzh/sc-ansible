@@ -5,7 +5,8 @@
     repo_key: E084DAB9
     imagej_baseurl: http://wsr.imagej.net/distros/linux
     imagej_fname: ij150-linux64-java8.zip
-    imagej_biof_url: http://downloads.openmicroscopy.org/bio-formats/5.1.9/artifacts/bio-formats_plugins.jar
+    # imagej_biof_url: http://downloads.openmicroscopy.org/bio-formats/5.1.9/artifacts/bio-formats_plugins.jar
+    imagej_biof_url: http://downloads.openmicroscopy.org/bio-formats/5.1.10/artifacts/bioformats_package.jar
     # plinker_url: https://www.dropbox.com/sh/4e25ix3psk01yhg/AABogODb5hHJCKXdPjVZqe4Fa/Software/ParticleLinker.jar
     packages:
       - r-base
@@ -41,7 +42,7 @@
 
     - name: Create directory for ParticleLinker
       file: dest=/usr/local/ParticleLinker state=directory
-      
+
     - name: Download ParticleLinker
       copy: src=ParticleLinker.jar dest=/usr/local/ParticleLinker/
 
@@ -54,9 +55,7 @@
       shell: Rscript -e 'installed.packages()' | grep bemovi
       register: bemovi_installed
       ignore_errors: yes
-      
+
     - name: install bemovi
       shell: Rscript /root/bemovi-install.R
       when: bemovi_installed|failed
-      
-      
