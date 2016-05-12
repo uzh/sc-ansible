@@ -13,3 +13,7 @@ the ParticleLinker in a publication, please cite
     Structural Biology 151(2):182-195, 2005.
 
 This ansible playbook has been tested on Ubuntu 14.04 only.
+
+Example run:
+
+    ansible-playbook -u ubuntu -s -i <ip>, site.yaml
